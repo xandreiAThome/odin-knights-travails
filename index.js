@@ -13,20 +13,32 @@ const MAX_X = 7;
 const MAX_Y = 7;
 
 function knightMoves(start, end) {
-  const availMoves = [start];
+  if (!start || !end) throw Error("start and end coordinate required");
+  if (start.length < 1 || end.length < 1)
+    throw Error("start and end coordinate requires x and y coordinate: [x,y]");
+  const availMoves = [];
   const visitedPos = new Set();
+  availMoves.push({ position: [...start], path: [[...start]] });
+  visitedPos.add(start.toString());
 
   while (availMoves.length > 0) {
-    const [x, y] = availMoves.shift();
-    visitedPos.add(`${x},${y}`);
+    const current = availMoves.shift();
+    const [x, y] = current.position;
+    const path = current.path;
+
+    if (x === end[0] && y === end[1]) {
+      return path;
+    }
+
     for (let [dx, dy] of generateMoves([x, y])) {
-      if (!visitedPos.has(`${dx},${dy}`)) {
-        availMoves.push([dx, dy]);
+      if (!visitedPos.has([dx, dy].toString())) {
+        availMoves.push({ position: [dx, dy], path: [...path, [dx, dy]] });
+        visitedPos.add([dx, dy].toString());
       }
     }
-    console.log(availMoves);
-    console.log(visitedPos);
   }
+
+  return [];
 }
 
 function generateMoves(pos) {
@@ -46,4 +58,4 @@ function generateMoves(pos) {
   return availMoves;
 }
 
-knightMoves([0, 0]);
+export { knightMoves };
